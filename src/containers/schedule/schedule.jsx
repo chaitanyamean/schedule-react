@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import AddSchedule from '../../components/schedule/addSchedule';
+import { addSchedule } from '../../actions/schedule.actions';
 
 class ScheduleContainer extends Component {
 
@@ -23,17 +24,15 @@ class ScheduleContainer extends Component {
         console.log(this.state)
     }
 
-    getScheduleData = (childData) => {
-        console.log(childData)
+    getScheduleData = (schedule) => {
+        console.log(schedule)
         this.toggleModal();
-    }
-
-    newSchedule = (schedule) => {
         this.setState({ schedule: schedule });
-        this.props.createSchedule(schedule);
+        this.props.addSchedule(schedule);
     }
 
     render() {
+        console.log('schedules', this.props.schedules)
         return (
             <div>
                 <Button
@@ -43,17 +42,39 @@ class ScheduleContainer extends Component {
                     Add Schedule
             </Button>
                 {this.state.isOpen ? <AddSchedule show={this.state.isOpen} getScheduleCallBack={this.getScheduleData}></AddSchedule> : ''}
+                {this.props.schedules.length === 0 ? (
+                    <div>
+                        <h1>No schedule added</h1>
 
-                <h1>This is schedule container</h1>
+                    </div>
+                ) : (
+                        <div>
+                            <h1>we have schedule but need to map</h1>
+                            {
+                                this.props.schedules.map(data => (
+                                    <h1 key={data.name}>{data.name}</h1>
+                                ))
+                            }
+
+                        </div>
+                    )}
             </div>
         )
     }
 }
 
 
-// const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addSchedule: schedule => dispatch(addSchedule(schedule))
+    }
+}
 
-//     schedule
-// }
+const mapStateToProps = (state) => {
+    console.log(state);
+    return {
+        schedules: state.schedule
+    }
+}
 
-export default connect()(ScheduleContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(ScheduleContainer);
